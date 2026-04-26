@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>JB4WOOD - Bibliothèque sur mesure | Lavadoux</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <style>
+        @font-face {
+            font-family: 'ErasBold';
+            src: url('assets/eras-bold.woff2') format('woff2'),
+                 url('assets/eras-bold-itc.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        :root {
+            --vert: #1a4a2e;
+            --vert-light: #24633e;
+            --or-bois: #b8954a;
+            --or-clair: #d4b06a;
+            --beton: #e8e4e0;
+            --beton-light: #f0edea;
+            --blanc: #ffffff;
+            --text: #2a2520;
+            --text-soft: #6b6058;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; overflow: hidden; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            color: var(--text);
+            background: var(--beton);
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ═══════════ ERAS BOLD PARTOUT ═══════════ */
+        .eras {
+            font-family: 'ErasBold', 'Arial Black', sans-serif;
+            letter-spacing: 0.02em;
+        }
+
+        /* ═══════════ SHIMMER EFFECT ═══════════ */
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* ═══════════ SCREENS ═══════════ */
+        .screen {
+            position: absolute;
+            inset: 0;
+            display: none;
+            flex-direction: column;
+            z-index: 0;
+        }
+
+        .screen.active {
+            display: flex;
+            z-index: 2;
+            animation: fadeIn 0.35s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .screen.fade-back {
+            animation: fadeBack 0.35s ease-out;
+        }
+
+        @keyframes fadeBack {
+            from { opacity: 0; transform: translateX(-40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ═══════════ HOME ═══════════ */
+        #home {
+            background: var(--beton);
+            background-image: url('assets/fond-beton.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .home-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 20px env(safe-area-inset-bottom, 16px);
+            max-width: 480px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 14px 0 18px;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            width: 88px;
+            height: 88px;
+            border-radius: 18px;
+            overflow: hidden;
+            margin: 0 auto 14px;
+            box-shadow: 0 6px 24px rgba(26,74,46,0.2), 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .logo img { width: 100%; height: 100%; object-fit: cover; }
+
+        .logo {
+            animation: scaleIn 0.6s ease-out;
+        }
+
+        .brand-name {
+            font-family: 'ErasBold', 'Arial Black', sans-serif;
+            font-size: 2.3rem;
+            color: var(--or-bois);
+            letter-spacing: 0.05em;
+            line-height: 1;
+            animation: slideInUp 0.6s ease-out 0.15s both;
+            text-shadow: 0 2px 8px rgba(184,149,74,0.15);
+        }
+
+        .brand-tagline {
+            font-family: 'ErasBold', 'Arial Black', sans-serif;
+            font-size: 0.82rem;
+            color: var(--vert);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-top: 6px;
+            animation: slideInUp 0.6s ease-out 0.3s both;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: rgba(255,255,255,0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(184,149,74,0.12);
+            border-radius: 20px;
+            padding: 28px 24px;
+            box-shadow: 0 8px 40px rgba(26,74,46,0.07), 0 2px 10px rgba(0,0,0,0.03);
+            width: 100%;
+            animation: slideInUp 0.6s ease-out 0.4s both;
+        }
+
+        .greeting {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-soft);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .greeting strong { color: var(--vert); font-weight: 600; }
+
+        .project-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .project-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 20px;
+            background: linear-gradient(135deg, var(--vert) 0%, var(--vert-light) 100%);
+            color: var(--blanc);
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            text-align: left;
+            font-family: inherit;
+            width: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Anneau or pulsant */
+        .project-card-ring {
+            position: absolute;
+            inset: -2px;
+            border-radius: 18px;
+            border: 2px solid var(--or-bois);
+            opacity: 0;
+            animation: cardRingPulse 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes cardRingPulse {
+            0% { opacity: 0; transform: scale(1); }
+            15% { opacity: 0.7; }
+            40% { opacity: 0; transform: scale(1.04); }
+            100% { opacity: 0; transform: scale(1.04); }
+        }
+
+        /* Diagonal shimmer continu */
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 40%;
+            height: 200%;
+            background: linear-gradient(
+                135deg,
+                transparent 0%,
+                rgba(184,149,74,0.08) 30%,
+                rgba(255,255,255,0.18) 50%,
+                rgba(184,149,74,0.08) 70%,
+                transparent 100%
+            );
+            transform: rotate(0deg);
+            animation: diagonalShimmer 4s ease-in-out infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes diagonalShimmer {
+            0% { left: -50%; }
+            40% { left: 150%; }
+            100% { left: 150%; }
+        }
+
+        /* Gold glow continu */
+        .project-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(184,149,74,0.12) 0%, transparent 50%, rgba(184,149,74,0.06) 100%);
+            opacity: 0;
+            animation: goldGlow 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes goldGlow {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .project-card:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow:
+                0 10px 36px rgba(26,74,46,0.35),
+                0 0 20px rgba(184,149,74,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .project-card:hover::before {
+            animation: diagonalShimmerFast 0.5s ease-out forwards;
+        }
+        .project-card:active { transform: scale(0.96); transition-duration: 0.1s; }
+
+        @keyframes diagonalShimmerFast {
+            from { left: -50%; }
+            to { left: 150%; }
+        }
+
+        .project-icon {
+            width: 44px; height: 44px;
+            border-radius: 11px;
+            background: rgba(255,255,255,0.12);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            position: relative; z-index: 1;
+        }
+
+        .project-info { flex: 1; position: relative; z-index: 1; }
+
+        .project-name {
+            font-family: 'ErasBold', 'Arial Black', sans-serif;
+            font-size: 1.05rem;
+            margin-bottom: 3px;
+            letter-spacing: 0.02em;
+        }
+
+        .project-desc { font-size: 0.82rem; opacity: 0.7; font-weight: 400; }
+
+        .project-arrow {
+            font-size: 1.3rem; opacity: 0.4;
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; z-index: 1;
+        }
+
+        .project-card:hover .project-arrow { opacity: 1; transform: translateX(6px); }
+
+        .footer-badge {
+            flex-shrink: 0;
+            text-align: center;
+            padding: 14px 0 4px;
+        }
+
+        .footer-badge {
+            animation: slideInUp 0.6s ease-out 0.6s both;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: rgba(26,74,46,0.06);
+            border: 1px solid rgba(26,74,46,0.1);
+            border-radius: 24px;
+            font-size: 0.78rem;
+            color: var(--vert);
+            font-weight: 500;
+        }
+
+        .badge-dot {
+            width: 7px; height: 7px;
+            background: var(--vert);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.4); }
+        }
+
+        .watermark {
+            position: fixed;
+            bottom: -4%; right: -4%;
+            width: 65vw; max-width: 420px;
+            opacity: 0.06;
+            pointer-events: none;
+            filter: grayscale(100%);
+            z-index: 0;
+        }
+
+        /* ═══════════ VIEWER SCREENS ═══════════ */
+        .viewer-screen {
+            background: var(--beton);
+        }
+
+        .viewer-header {
+            background: linear-gradient(135deg, var(--vert) 0%, var(--vert-light) 100%);
+            color: var(--blanc);
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 10;
+            flex-shrink: 0;
+            justify-content: center;
+        }
+
+        .viewer-header-inner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 720px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .viewer-header::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(184,149,74,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .btn-back {
+            position: relative; z-index: 1;
+            width: 34px; height: 34px;
+            border-radius: 9px;
+            background: rgba(255,255,255,0.12);
+            border: none;
+            color: var(--blanc);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.3s;
+            flex-shrink: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-back:hover { background: rgba(255,255,255,0.22); transform: scale(1.08); }
+        .btn-back:active { transform: scale(0.92); }
+
+        .header-logo {
+            width: 36px; height: 36px;
+            border-radius: 9px;
+            overflow: hidden;
+            position: relative; z-index: 1;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .header-logo img { width: 100%; height: 100%; object-fit: cover; }
+
+        .header-text { flex: 1; position: relative; z-index: 1; }
+
+        .header-text h2 {
+            font-family: 'ErasBold', 'Arial Black', sans-serif;
+            font-size: 1.05rem;
+            letter-spacing: 0.03em;
+        }
+
+        .header-text p { font-size: 0.78rem; opacity: 0.65; margin-top: 2px; font-weight: 400; }
+
+        .viewer-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-height: 0;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        model-viewer {
+            width: 100%;
+            flex: 1;
+            min-height: 200px;
+            background: linear-gradient(180deg, var(--beton-light) 0%, var(--beton) 100%);
+            --poster-color: transparent;
+            --progress-bar-color: var(--vert);
+            --progress-bar-height: 3px;
+        }
+
+        .ar-btn {
+            background: linear-gradient(135deg, var(--vert), var(--vert-light));
+            color: var(--blanc);
+            border: none;
+            border-radius: 16px;
+            padding: 15px 26px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: absolute;
+            bottom: 20px; left: 50%;
+            transform: translateX(-50%);
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 6px 24px rgba(26,74,46,0.35);
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 5;
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+            animation: floatBtn 3s ease-in-out infinite;
+            overflow: hidden;
+        }
+
+        @keyframes floatBtn {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-4px); }
+        }
+
+        .ar-btn:hover {
+            transform: translateX(-50%) translateY(-4px) scale(1.04);
+            box-shadow: 0 12px 40px rgba(26,74,46,0.45), 0 0 20px rgba(184,149,74,0.15);
+            animation: none;
+        }
+        .ar-btn:active { transform: translateX(-50%) scale(0.96); animation: none; }
+
+        /* Shimmer on AR button */
+        .ar-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            animation: arShimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes arShimmer {
+            0%, 70% { left: -50%; }
+            100% { left: 150%; }
+        }
+
+        .ar-btn .ring {
+            position: absolute; inset: -4px;
+            border-radius: 20px;
+            border: 2px solid var(--or-bois);
+            opacity: 0;
+            animation: arPulse 2.5s ease-out infinite;
+        }
+
+        @keyframes arPulse {
+            0% { opacity: 0.6; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.08); }
+        }
+
+        .loading {
+            position: absolute; inset: 0;
+            background: linear-gradient(180deg, var(--beton-light) 0%, var(--beton) 100%);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 14px; z-index: 3;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .loading.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        .spinner {
+            width: 44px; height: 44px;
+            border: 3px solid var(--beton);
+            border-top-color: var(--vert);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading span { font-size: 0.82rem; color: var(--text-soft); }
+
+        /* Panel */
+        .panel {
+            background: var(--blanc);
+            border-radius: 22px 22px 0 0;
+            padding: 20px 18px env(safe-area-inset-bottom, 24px);
+            box-shadow: 0 -4px 24px rgba(0,0,0,0.05);
+            z-index: 5;
+            flex-shrink: 0;
+        }
+
+        .panel-inner {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .handle {
+            width: 32px; height: 4px;
+            background: var(--beton);
+            border-radius: 2px;
+            margin: 0 auto 14px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            font-style: italic;
+            font-size: 0.95rem;
+            color: var(--vert);
+            margin-bottom: 10px;
+        }
+
+        .gestures {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .gesture {
+            text-align: center;
+            padding: 12px 6px;
+            background: var(--beton-light);
+            border-radius: 12px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .gesture:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .gesture-icon { font-size: 1.4rem; margin-bottom: 5px; }
+        .gesture-label { font-size: 0.75rem; color: var(--text-soft); font-weight: 500; line-height: 1.35; }
+        .gesture-label strong { display: block; color: var(--text); font-size: 0.78rem; margin-bottom: 2px; }
+
+        .ar-steps {
+            background: linear-gradient(135deg, rgba(26,74,46,0.05), rgba(184,149,74,0.04));
+            border: 1px solid rgba(26,74,46,0.1);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+        }
+
+        .step { display: flex; align-items: flex-start; gap: 9px; margin-bottom: 6px; }
+        .step:last-child { margin-bottom: 0; }
+
+        .step-n {
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: var(--vert);
+            color: var(--blanc);
+            font-size: 0.65rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; margin-top: 1px;
+        }
+
+        .step-t { font-size: 0.82rem; color: var(--text-soft); line-height: 1.5; }
+
+        .nav-btn {
+            display: flex;
+            align-items: center; justify-content: center;
+            gap: 10px; width: 100%; padding: 16px;
+            background: linear-gradient(135deg, var(--vert), var(--vert-light));
+            color: var(--blanc);
+            border: none; border-radius: 14px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600; font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 16px rgba(26,74,46,0.2);
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: none;
+        }
+
+        .nav-btn:hover::before {
+            animation: shimmerSweep 0.5s ease-out;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 8px 28px rgba(26,74,46,0.3), 0 0 12px rgba(184,149,74,0.1);
+        }
+        .nav-btn:active { transform: scale(0.97); transition-duration: 0.1s; }
+
+        /* ═══════════ RESPONSIVE ═══════════ */
+        @media (max-height: 650px) {
+            .hero { padding: 6px 0 10px; }
+            .logo { width: 60px; height: 60px; }
+            .brand-name { font-size: 1.6rem; }
+            .brand-tagline { font-size: 0.7rem; }
+            .card { padding: 16px 18px; }
+            .greeting { font-size: 0.85rem; margin-bottom: 14px; }
+            .panel { padding: 12px 16px 16px; }
+            .gestures { gap: 6px; margin-bottom: 10px; }
+            .gesture { padding: 8px 4px; }
+            .ar-steps { padding: 10px 12px; margin-bottom: 10px; }
+        }
+
+        @media (max-height: 500px) {
+            .greeting { display: none; }
+            .hero { padding: 4px 0 6px; }
+            .logo { width: 44px; height: 44px; border-radius: 12px; }
+            .ar-steps { display: none; }
+        }
+
+        @media (min-height: 800px) {
+            .hero { padding: 24px 0; }
+            .logo { width: 100px; height: 100px; }
+            .brand-name { font-size: 2.6rem; }
+            .card { padding: 32px 26px; }
+            .greeting { font-size: 1rem; margin-bottom: 28px; }
+        }
+
+        @media (max-width: 360px) {
+            .gestures { gap: 5px; }
+            .gesture { padding: 8px 2px; }
+            .gesture-icon { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════ HOME ═══════════ -->
+    <div class="screen active" id="home">
+        <img src="assets/logo-noir.png" alt="" class="watermark">
+        <div class="home-content">
+            <div class="hero">
+                <div class="logo"><img src="assets/logo-bois.png" alt="JB4WOOD"></div>
+                <div class="brand-name eras">JB4WOOD</div>
+                <p class="brand-tagline">Votre artisan menuisier</p>
+            </div>
+
+            <div class="card">
+                <p class="greeting">
+                    Bonjour <strong>Lavadoux</strong> !<br>
+                    Visualisez votre future bibliothèque en 3D et testez-la
+                    directement chez vous en réalité augmentée.
+                </p>
+                <div class="project-links">
+                    <button class="project-card" data-target="bibliotheque">
+                        <span class="project-card-ring"></span>
+                        <div class="project-icon">&#x1f4da;</div>
+                        <div class="project-info">
+                            <div class="project-name eras">Bibliothèque sur mesure</div>
+                            <div class="project-desc">Voir le modèle 3D &amp; AR</div>
+                        </div>
+                        <div class="project-arrow">&rarr;</div>
+                    </button>
+                </div>
+            </div>
+
+            <div class="footer-badge">
+                <div class="badge">
+                    <span class="badge-dot"></span>
+                    Disponible sur tablette et smartphone &#x1f4f1;
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ BIBLIOTHÈQUE ═══════════ -->
+    <div class="screen viewer-screen" id="bibliotheque">
+        <div class="viewer-header">
+            <div class="viewer-header-inner">
+            <button class="btn-back" data-target="home">&larr;</button>
+            <div class="header-logo"><img src="assets/logo-bois.png" alt="JB4WOOD"></div>
+            <div class="header-text">
+                <h2 class="eras">Bibliothèque sur mesure</h2>
+                <p>Projet Lavadoux</p>
+            </div>
+            </div>
+        </div>
+        <div class="viewer-body">
+            <div class="loading" id="loader-bibliotheque">
+                <div class="spinner"></div>
+                <span>Chargement du modèle 3D...</span>
+            </div>
+            <model-viewer
+                id="mv-bibliotheque"
+                src="bibliotheque.glb"
+                alt="Bibliothèque sur mesure - JB4WOOD"
+                ar ar-modes="scene-viewer quick-look webxr" ar-scale="auto"
+                camera-controls touch-action="pan-y"
+                auto-rotate rotation-per-second="18deg"
+                shadow-intensity="1.2" shadow-softness="0.8"
+                exposure="1.05" environment-image="neutral"
+                interaction-prompt="auto"
+            >
+                <button slot="ar-button" class="ar-btn">
+                    <span class="ring"></span>
+                    &#x1f4f1; Voir dans ma pièce
+                </button>
+            </model-viewer>
+        </div>
+        <div class="panel">
+            <div class="handle"></div>
+            <div class="panel-inner">
+            <div class="section-title">Commandes 3D</div>
+            <div class="gestures">
+                <div class="gesture"><div class="gesture-icon">&#x1f446;</div><div class="gesture-label"><strong>1 doigt</strong>Tourner</div></div>
+                <div class="gesture"><div class="gesture-icon">&#x1f90f;</div><div class="gesture-label"><strong>Pincer</strong>Zoomer</div></div>
+                <div class="gesture"><div class="gesture-icon">&#x270c;&#xfe0f;</div><div class="gesture-label"><strong>2 doigts</strong>Déplacer</div></div>
+            </div>
+            <div class="section-title">En réalité augmentée</div>
+            <div class="ar-steps">
+                <div class="step"><span class="step-n">1</span><span class="step-t">Appuyez sur <strong>"Voir dans ma pièce"</strong></span></div>
+                <div class="step"><span class="step-n">2</span><span class="step-t">Visez le mur avec la caméra</span></div>
+                <div class="step"><span class="step-n">3</span><span class="step-t"><strong>1 doigt</strong> = déplacer &middot; <strong>2 doigts</strong> = pivoter &middot; <strong>Pincer</strong> = redimensionner</span></div>
+            </div>
+            <button class="nav-btn" data-target="home">&larr; Retour à l'accueil</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════ NAVIGATION ═══════════
+        let currentScreen = 'home';
+
+        function navigate(target, direction) {
+            if (target === currentScreen) return;
+            const fromEl = document.getElementById(currentScreen);
+            const toEl = document.getElementById(target);
+
+            // Hide current
+            fromEl.classList.remove('active', 'fade-back');
+            fromEl.style.display = 'none';
+
+            // Show target
+            toEl.style.display = 'flex';
+            // Force reflow so animation triggers
+            toEl.offsetHeight;
+            toEl.classList.add('active');
+            if (direction === 'back') {
+                toEl.classList.add('fade-back');
+            }
+
+            currentScreen = target;
+
+            // Force model-viewer to recalculate size
+            requestAnimationFrame(() => {
+                window.dispatchEvent(new Event('resize'));
+            });
+        }
+
+        // Event delegation for all navigation buttons
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-target]');
+            if (!btn) return;
+            const target = btn.dataset.target;
+            const isBack = btn.classList.contains('btn-back') || target === 'home';
+            navigate(target, isBack ? 'back' : 'forward');
+        });
+
+        // ═══════════ LOADERS ═══════════
+        const viewers = ['mv-bibliotheque'];
+        viewers.forEach(id => {
+            const mv = document.getElementById(id);
+            const loader = document.getElementById('loader-' + id.replace('mv-', ''));
+            if (mv && loader) {
+                mv.addEventListener('load', () => loader.classList.add('hidden'));
+            }
+        });
+        // Fallback
+        setTimeout(() => {
+            document.querySelectorAll('.loading').forEach(l => l.classList.add('hidden'));
+        }, 10000);
+    </script>
+</body>
+</html>
